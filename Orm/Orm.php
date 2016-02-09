@@ -57,7 +57,13 @@ abstract class OrmAbstract implements Orm_OrmInterface
     }
     public function delete()
     {
-        $this->deleteEntry();
+        try {
+            $this->deleteEntry();
+        }
+        catch (Exception $ex)
+        {
+            echo "An error has occurred while deleting the data: $ex";
+        }
     }
     protected abstract function setField($field, $value);
     protected abstract function getField($field);
