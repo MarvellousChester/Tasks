@@ -36,7 +36,7 @@ echo $user3->get('first_name') . '<br />';
 echo $user3->get('last_name') . '<br />';
 echo $user3->get('email') . '<br />';
 echo $user3->get('creation_date') . '<br />';
-#$user3->save();
+$user3->save();
 
 
 $category = new Category('first', 'key');
@@ -54,3 +54,5 @@ echo $category->get('url_key'). '<br />';
 $category3 = new Category();
 $category3->load(3);
 #$category3->delete();
+$category4 = new Category('My very First Category ');
+$category4->save();

@@ -12,31 +12,24 @@ class Category extends OrmAbstract
     private $name;
     private $urlKey;
 
-    private $dbh;
 
-    private $isLoaded = false;
-    private $error = false;
 
     public function __construct($name='', $urlKey='')
     {
-        $dsn = "mysql:dbname=test_db;host=localhost";
-        $user = 'phpmyadmin';
-        $password = '123456';
-        $this->dbh = new PDO($dsn, $user, $password);
-
         //$this->name = $name;
         //$this->urlKey = $urlKey;
         $this->setField('name', $name);
 
         if($urlKey=='') $this->setField('url_key', $name); //Если ключ не задан, то формируем его на основе имени
         else $this->setField('url_key', $urlKey);
+        parent::__construct();
     }
 
     protected function setField($field, $value)
     {
         switch($field) {
             case 'name': $this->name = $value; break;
-            case 'url_key': $this->urlKey = strtr(trim($value), ' ', '-'); break;
+            case 'url_key': $this->urlKey = mb_strtolower(strtr(trim($value), ' ', '-')); break; //Приводим ключ в нужный формат
             default: echo 'Please check the field name';
         }
     }
@@ -50,23 +43,12 @@ class Category extends OrmAbstract
     }
     protected function loadEntry($id)
     {
-        try{
             $statement = $this->dbh->prepare("SELECT * FROM `category` WHERE category_id = ?");
             $statement->execute([$id]);
             $values = $statement->fetch();
             $this->id = $id;
             $this->name = $values['name'];
             $this->urlKey = $values['url_key'];
-        }
-        catch (Exception $ex)
-        {
-            $this->error = true;
-            echo $ex;
-        }
-        finally
-        {
-            if($this->error == null) $this->isLoaded = true;
-        }
     }
     protected function saveEntry()
     {

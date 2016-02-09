@@ -9,6 +9,17 @@ require_once 'OrmInterface.php';
 
 abstract class OrmAbstract implements Orm_OrmInterface
 {
+    protected $isLoaded = false;
+    protected $error = false;
+    protected $dbh;
+
+    protected function __construct()
+    {
+        $dsn = "mysql:dbname=test_db;host=localhost";
+        $user = 'phpmyadmin';
+        $password = '123456';
+        $this->dbh = new PDO($dsn, $user, $password);
+    }
 
     public function set($field, $value)
     {
@@ -20,7 +31,19 @@ abstract class OrmAbstract implements Orm_OrmInterface
     }
     public function load($id)
     {
-        return $this->loadEntry($id);
+        try {
+            $operation = $this->loadEntry($id);
+        }
+        catch (Exception $ex)
+        {
+            $this->error = true;
+            echo $ex;
+        }
+        finally
+        {
+            if($this->error == null) $this->isLoaded = true;
+            return $operation;
+        }
     }
     public function save()
     {

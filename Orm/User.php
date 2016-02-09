@@ -14,22 +14,16 @@ class User extends OrmAbstract
     private $email;
     private $creationDate;
 
-    private $dbh;
-
-    private $isLoaded = false;
-    private $error = false;
+    //private $isLoaded = false;
+    //private $error = false;
 
     public function __construct($firstName='', $lastName='', $email='')
     {
-        $dsn = "mysql:dbname=test_db;host=localhost";
-        $user = 'phpmyadmin';
-        $password = '123456';
-        $this->dbh = new PDO($dsn, $user, $password);
-
         $this->firstName = $firstName;
         $this->lastName = $lastName;
         $this->email = $email;
         $this->creationDate = date('Y-m-d H:i:s');
+        parent::__construct();
     }
 
     protected function setField($field, $value)
@@ -55,7 +49,6 @@ class User extends OrmAbstract
     }
     protected function loadEntry($id)
     {
-        try {
             $statement = $this->dbh->prepare("SELECT * FROM `user` WHERE user_id = ?");
             $statement->execute([$id]);
             $values = $statement->fetch();
@@ -64,16 +57,6 @@ class User extends OrmAbstract
             $this->lastName = $values['last_name'];
             $this->email = $values['email'];
             $this->creationDate = $values['creation_date'];
-        }
-        catch (Exception $ex)
-        {
-            $this->error = true;
-            echo $ex;
-        }
-        finally
-        {
-            if($this->error == null) $this->isLoaded = true;
-        }
     }
     protected function saveEntry()
     {
