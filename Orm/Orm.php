@@ -5,29 +5,34 @@
  * Date: 09.02.16
  * Time: 12:37
  */
-include 'OrmInterface.php';
+require_once 'OrmInterface.php';
 
 abstract class OrmAbstract implements Orm_OrmInterface
 {
+
     public function set($field, $value)
     {
-
+        $this->setField($field, $value);
     }
     public function get($field)
     {
-        // TODO: Implement get() method.
+        return $this->getField($field);
     }
     public function load($id)
     {
-        // TODO: Implement load() method.
+        return $this->loadEntry($id);
     }
     public function save()
     {
-        // TODO: Implement save() method.
+        $this->saveEntry();
     }
     public function delete()
     {
-        // TODO: Implement delete() method.
+        $this->deleteEntry();
     }
-    
+    protected abstract function setField($field, $value);
+    protected abstract function getField($field);
+    protected abstract function loadEntry($id);
+    protected abstract function saveEntry();
+    protected abstract function deleteEntry();
 }
