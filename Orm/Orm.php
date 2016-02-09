@@ -41,8 +41,13 @@ abstract class OrmAbstract implements Orm_OrmInterface
         }
         finally
         {
-            if($this->error != true) $this->isLoaded = true;
-            return $operation;
+            if($this->error != true)
+            {
+                $this->isLoaded = true;
+                return $operation;
+            }
+            else return null;
+
         }
     }
     public function save()
