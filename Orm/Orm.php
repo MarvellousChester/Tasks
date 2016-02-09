@@ -37,17 +37,23 @@ abstract class OrmAbstract implements Orm_OrmInterface
         catch (Exception $ex)
         {
             $this->error = true;
-            echo $ex;
+            echo "An error has occurred while loading the data: $ex";
         }
         finally
         {
-            if($this->error == null) $this->isLoaded = true;
+            if($this->error != true) $this->isLoaded = true;
             return $operation;
         }
     }
     public function save()
     {
-        $this->saveEntry();
+        try {
+            $this->saveEntry();
+        }
+        catch (Exception $ex)
+        {
+            echo "An error has occurred while saving the data: $ex";
+        }
     }
     public function delete()
     {

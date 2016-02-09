@@ -12,8 +12,6 @@ class Category extends OrmAbstract
     private $name;
     private $urlKey;
 
-
-
     public function __construct($name='', $urlKey='')
     {
         //$this->name = $name;

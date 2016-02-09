@@ -17,6 +17,7 @@ echo $user->get('email') . '<br />';
 echo $user->get('creation_date') . '<br />';
 
 $user->set('first_name', 'Alex');
+echo '<br />'. $user->getId() .'<br />';
 $user->save();
 echo $user->get('first_name') . '<br />';
 
