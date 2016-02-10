@@ -27,7 +27,9 @@ class Category extends OrmAbstract
     {
         switch($field) {
             case 'name': $this->name = $value; break;
-            case 'url_key': $this->urlKey = mb_strtolower(strtr(trim($value), ' ', '-')); break; //Приводим ключ в нужный формат
+            case 'url_key':
+                $this->urlKey = mb_strtolower(strtr(trim($value), ' ', '-'));
+                break; //Приводим ключ в нужный формат
             default: echo 'Please check the field name';
         }
     }
@@ -41,7 +43,8 @@ class Category extends OrmAbstract
     }
     protected function loadEntry($id)
     {
-            $statement = $this->dbh->prepare("SELECT * FROM `category` WHERE category_id = ?");
+            $statement = $this->dbh->prepare("SELECT * FROM `category`
+                WHERE category_id = ?");
             $statement->execute([$id]);
             $values = $statement->fetch();
             $this->id = $id;
@@ -52,13 +55,19 @@ class Category extends OrmAbstract
     {
         if($this->isLoaded)
         {
-            $statement = $this->dbh->prepare("UPDATE `category` SET `name` = ?, `url_key` = ?
+            $statement = $this->dbh->prepare(
+                "UPDATE `category`
+                SET `name` = ?, `url_key` = ?
                 WHERE category_id = ?");
-            $inserted = $statement->execute([$this->name, $this->urlKey, $this->id]);
+            $inserted = $statement->execute(
+                [$this->name,
+                 $this->urlKey,
+                 $this->id]);
         }
         else
         {
-            $statement = $this->dbh->prepare("INSERT INTO `category` (`name`, `url_key`)
+            $statement = $this->dbh->prepare(
+                "INSERT INTO `category` (`name`, `url_key`)
                 values (?, ?)");
             $inserted = $statement->execute([$this->name, $this->urlKey]);
         }
@@ -68,7 +77,8 @@ class Category extends OrmAbstract
     protected function deleteEntry()
     {
         if($this->isLoaded) {
-            $statement = $this->dbh->prepare("DELETE FROM `category` WHERE category_id = ?");
+            $statement = $this->dbh->prepare("DELETE FROM `category`
+                WHERE category_id = ?");
             $inserted = $statement->execute([$this->id]);
             echo $inserted . 'entry was deleted';
         }

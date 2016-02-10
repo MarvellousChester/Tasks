@@ -49,7 +49,9 @@ class User extends OrmAbstract
     }
     protected function loadEntry($id)
     {
-            $statement = $this->dbh->prepare("SELECT * FROM `user` WHERE user_id = ?");
+            $statement = $this->dbh->prepare(
+                "SELECT * FROM `user` WHERE user_id = ?"
+            );
             $statement->execute([$id]);
             $values = $statement->fetch();
             $this->id = $id;
@@ -62,15 +64,27 @@ class User extends OrmAbstract
     {
         if($this->isLoaded)
         {
-            $statement = $this->dbh->prepare("UPDATE `user` SET `first_name` = ?, `last_name` = ?, `email` = ?
+            $statement = $this->dbh->prepare(
+                "UPDATE `user`
+                SET `first_name` = ?, `last_name` = ?, `email` = ?
                 WHERE user_id = ?");
-            $inserted = $statement->execute([$this->firstName, $this->lastName, $this->email, $this->id]);
+            $inserted = $statement->execute(
+                [$this->firstName,
+                 $this->lastName,
+                 $this->email,
+                 $this->id]);
         }
         else
         {
-            $statement = $this->dbh->prepare("INSERT INTO `user` (`first_name`, `last_name`, `email`, `creation_date`)
+            $statement = $this->dbh->prepare(
+                "INSERT INTO `user`
+               (`first_name`, `last_name`, `email`, `creation_date`)
                 values (?, ?, ?, ?)");
-            $inserted = $statement->execute([$this->firstName, $this->lastName, $this->email, $this->creationDate]);
+            $inserted = $statement->execute(
+                [$this->firstName,
+                 $this->lastName,
+                 $this->email,
+                 $this->creationDate]);
         }
 
         echo "$inserted lines added. <br />";
@@ -78,7 +92,8 @@ class User extends OrmAbstract
     protected function deleteEntry()
     {
         if($this->isLoaded) {
-            $statement = $this->dbh->prepare("DELETE FROM `user` WHERE user_id = ?");
+            $statement = $this->dbh->prepare("DELETE FROM `user`
+                WHERE user_id = ?");
             $inserted = $statement->execute([$this->id]);
             echo $inserted . 'entry was deleted';
         }

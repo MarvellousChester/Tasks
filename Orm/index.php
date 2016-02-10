@@ -16,7 +16,8 @@ echo $user->get('last_name') . '<br />';
 echo $user->get('email') . '<br />';
 echo $user->get('creation_date') . '<br />';
 
-$user->set('first_name', 'Alex');
+$user->set('first_name', 'Igor');
+$user->set('last_name', 'Badaev');
 echo '<br />'. $user->getId() .'<br />';
 $user->save();
 echo $user->get('first_name') . '<br />';
