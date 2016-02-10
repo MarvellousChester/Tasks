@@ -9,6 +9,7 @@ require_once 'OrmInterface.php';
 
 abstract class OrmAbstract implements Orm_OrmInterface
 {
+    protected $data = Array();
     protected $isLoaded = false;
     protected $error = false;
     protected $dbh;
@@ -23,21 +24,23 @@ abstract class OrmAbstract implements Orm_OrmInterface
 
     public function set($field, $value)
     {
-        $this->setField($field, $value);
+        $this->data[$field] = $value;
     }
     public function get($field)
     {
-        return $this->getField($field);
+        if(array_key_exists($field, $this->data)) return $this->data[$field];
+        else return false;
     }
     public function load($id)
     {
         try {
             $operation = $this->loadEntry($id);
+            if($operation == false) throw new Exception('Entry not found!');
         }
         catch (Exception $ex)
         {
             $this->error = true;
-            echo "An error has occurred while loading the data: $ex";
+            echo "An error has occurred while loading the data: $ex <br />";
         }
         finally
         {
@@ -57,7 +60,7 @@ abstract class OrmAbstract implements Orm_OrmInterface
         }
         catch (Exception $ex)
         {
-            echo "An error has occurred while saving the data: $ex";
+            echo "An error has occurred while saving the data: $ex <br />";
         }
     }
     public function delete()
@@ -67,11 +70,9 @@ abstract class OrmAbstract implements Orm_OrmInterface
         }
         catch (Exception $ex)
         {
-            echo "An error has occurred while deleting the data: $ex";
+            echo "An error has occurred while deleting the data: $ex <br />";
         }
     }
-    protected abstract function setField($field, $value);
-    protected abstract function getField($field);
     protected abstract function loadEntry($id);
     protected abstract function saveEntry();
     protected abstract function deleteEntry();

@@ -8,51 +8,33 @@
 include_once 'Orm.php';
 class Category extends OrmAbstract
 {
-    private $id;
+    /*private $id;
     private $name;
-    private $urlKey;
+    private $urlKey;*/
 
     public function __construct($name='', $urlKey='')
     {
-        //$this->name = $name;
-        //$this->urlKey = $urlKey;
-        $this->setField('name', $name);
-
-        if($urlKey=='') $this->setField('url_key', $name); //Если ключ не задан, то формируем его на основе имени
-        else $this->setField('url_key', $urlKey);
+        $this->data['name'] = $name;
+        $this->data['url_key'] = $urlKey;
         parent::__construct();
     }
 
-    protected function setField($field, $value)
-    {
-        switch($field) {
-            case 'name': $this->name = $value; break;
-            case 'url_key':
-                $this->urlKey = mb_strtolower(strtr(trim($value), ' ', '-'));
-                break; //Приводим ключ в нужный формат
-            default: echo 'Please check the field name';
-        }
-    }
-    protected function getField($field)
-    {
-        switch($field) {
-            case 'name': return $this->name;
-            case 'url_key': return $this->urlKey;
-            default: { echo 'Please check the field name'; return false;}
-        }
-    }
     protected function loadEntry($id)
     {
             $statement = $this->dbh->prepare("SELECT * FROM `category`
                 WHERE category_id = ?");
             $statement->execute([$id]);
             $values = $statement->fetch();
-            $this->id = $id;
-            $this->name = $values['name'];
-            $this->urlKey = $values['url_key'];
+            $this->data = $values;
     }
     protected function saveEntry()
     {
+        //Если url_key отсутствует, то формируем его на основе name
+        if($this->data['url_key'] == '')
+            $this->data['url_key'] = $this->data['name'];
+        //Приводим url_key в нужный формат
+        $this->data['url_key'] =
+            mb_strtolower(strtr(trim($this->data['url_key']), ' ', '-'));
         if($this->isLoaded)
         {
             $statement = $this->dbh->prepare(
@@ -60,16 +42,17 @@ class Category extends OrmAbstract
                 SET `name` = ?, `url_key` = ?
                 WHERE category_id = ?");
             $inserted = $statement->execute(
-                [$this->name,
-                 $this->urlKey,
-                 $this->id]);
+                [$this->data['name'],
+                 $this->data['url_key'],
+                 $this->data['category_id']]);
         }
         else
         {
             $statement = $this->dbh->prepare(
-                "INSERT INTO `category` (`name`, `url_key`)
-                values (?, ?)");
-            $inserted = $statement->execute([$this->name, $this->urlKey]);
+                "INSERT INTO `category` (`name`, `url_key`) values (?, ?)");
+            $inserted = $statement->execute(
+                [$this->data['name'],
+                 $this->data['url_key']]);
         }
 
         echo "$inserted lines added. <br />";
@@ -79,13 +62,14 @@ class Category extends OrmAbstract
         if($this->isLoaded) {
             $statement = $this->dbh->prepare("DELETE FROM `category`
                 WHERE category_id = ?");
-            $inserted = $statement->execute([$this->id]);
+            $inserted = $statement->execute([$this->data['category_id']]);
             echo $inserted . 'entry was deleted';
         }
         else echo 'You must load an entry before deleting';
     }
     public function getId()
     {
-        return $this->id;
+        if(array_key_exists('category_id', $this->data)) return $this->data['category_id'];
+        else return false;
     }
 }
