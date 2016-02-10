@@ -22,11 +22,6 @@ class Category extends OrmAbstract
         parent::__construct();
     }
 
-    /**
-     * @param $id
-     *
-     * @return mixed
-     */
     protected function loadEntry($id)
     {
             $statement = $this->dbh->prepare("SELECT * FROM `category`
@@ -81,7 +76,8 @@ class Category extends OrmAbstract
 
     public function getId()
     {
-        if(array_key_exists('category_id', $this->data)) return $this->data['category_id'];
+        if(array_key_exists('category_id', $this->data))
+            return $this->data['category_id'];
         else return false;
     }
 }

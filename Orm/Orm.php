@@ -14,6 +14,9 @@ abstract class OrmAbstract implements Orm_OrmInterface
     protected $error = false;
     protected $dbh;
 
+    /**
+     * OrmAbstract constructor.
+     */
     protected function __construct()
     {
         $dsn = "mysql:dbname=test_db;host=localhost";

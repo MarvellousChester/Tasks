@@ -8,6 +8,13 @@
 include_once 'Orm.php';
 class User extends OrmAbstract
 {
+    /**
+     * User constructor.
+     *
+     * @param string $firstName
+     * @param string $lastName
+     * @param string $email
+     */
     public function __construct($firstName='', $lastName='', $email='')
     {
         $this->data['first_name'] = $firstName;
@@ -77,7 +84,8 @@ class User extends OrmAbstract
 
     public function getId()
     {
-        if(array_key_exists('user_id', $this->data)) return $this->data['user_id'];
+        if(array_key_exists('user_id', $this->data))
+            return $this->data['user_id'];
         else return false;
     }
 
