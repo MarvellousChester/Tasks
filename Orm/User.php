@@ -30,7 +30,9 @@ class User extends OrmAbstract
             return false;
         }
         $this->data = $values;
+        return $this->data;
     }
+
     protected function saveEntry()
     {
         if($this->isLoaded)
@@ -60,6 +62,7 @@ class User extends OrmAbstract
 
         echo "$inserted lines added. <br />";
     }
+
     protected function deleteEntry()
     {
         if($this->isLoaded) {

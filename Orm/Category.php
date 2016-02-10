@@ -8,10 +8,13 @@
 include_once 'Orm.php';
 class Category extends OrmAbstract
 {
-    /*private $id;
-    private $name;
-    private $urlKey;*/
 
+    /**
+     * Category constructor.
+     *
+     * @param string $name
+     * @param string $urlKey
+     */
     public function __construct($name='', $urlKey='')
     {
         $this->data['name'] = $name;
@@ -19,6 +22,11 @@ class Category extends OrmAbstract
         parent::__construct();
     }
 
+    /**
+     * @param $id
+     *
+     * @return mixed
+     */
     protected function loadEntry($id)
     {
             $statement = $this->dbh->prepare("SELECT * FROM `category`
@@ -26,7 +34,9 @@ class Category extends OrmAbstract
             $statement->execute([$id]);
             $values = $statement->fetch();
             $this->data = $values;
+        return $this->data;
     }
+
     protected function saveEntry()
     {
         //Если url_key отсутствует, то формируем его на основе name
@@ -39,8 +49,8 @@ class Category extends OrmAbstract
         {
             $statement = $this->dbh->prepare(
                 "UPDATE `category`
-                SET `name` = ?, `url_key` = ?
-                WHERE category_id = ?");
+                 SET `name` = ?, `url_key` = ?
+                 WHERE category_id = ?");
             $inserted = $statement->execute(
                 [$this->data['name'],
                  $this->data['url_key'],
@@ -57,6 +67,7 @@ class Category extends OrmAbstract
 
         echo "$inserted lines added. <br />";
     }
+
     protected function deleteEntry()
     {
         if($this->isLoaded) {
@@ -67,6 +78,7 @@ class Category extends OrmAbstract
         }
         else echo 'You must load an entry before deleting';
     }
+
     public function getId()
     {
         if(array_key_exists('category_id', $this->data)) return $this->data['category_id'];
