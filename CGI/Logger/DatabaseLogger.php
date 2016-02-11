@@ -1,6 +1,6 @@
 <?php
 namespace CGI\Logger;
-require_once 'LoggerInterface.php';
+require_once 'LoggerAbstract.php';
 require_once '../CGI/Connection/PdoConnection.php';
 
 use CGI\Connection\PdoConnection;

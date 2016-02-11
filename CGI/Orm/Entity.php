@@ -3,10 +3,13 @@ namespace CGI\Orm;
 
 include 'OrmInterface.php';
 require_once '../CGI/Connection/PdoConnection.php';
+require_once '../CGI/Logger/DatabaseLogger.php';
+require_once '../CGI/Logger/FileLogger.php';
 
 use PDO;
 use CGI\Connection\PdoConnection;
 use CGI\Logger\DatabaseLogger;
+use CGI\Logger\FileLogger;
 /**
  * Created by PhpStorm.
  * User: aleksandr
@@ -19,16 +22,30 @@ abstract class EntityAbstract implements OrmInterface
     protected $data = [];
     protected $isLoaded = false;
     protected $error = false;
+
     protected static $dbh = null;
+    protected static $logger = null;
+
+    private $connection = null;
 
     protected $table;
     protected $primaryKey;
 
     public function __construct($data = [])
     {
+        if(self::$logger == null) {
+            self::$logger = new FileLogger('log.txt');
+        }
+
         if (self::$dbh == null) {
-            $connection = new PdoConnection('file');
-            self::$dbh = $connection->establish();
+            try{
+                $this->connection = new PdoConnection('file');
+                self::$dbh = $this->connection->establish();
+            }
+            catch (\PDOException $ex) {
+                self::$logger->error($ex);
+            }
+
         }
 
         $this->data = $data;
@@ -37,8 +54,13 @@ abstract class EntityAbstract implements OrmInterface
         $statement = self::$dbh->query(
             'SHOW COLUMNS FROM ' . $this->getTableName()
         );
-        $this->primaryKey = $statement->fetch(PDO::FETCH_NUM)[0];
-
+        if($statement) {
+            $this->primaryKey = $statement->fetch(PDO::FETCH_NUM)[0];
+        }
+        else {
+            self::$logger->error("Ошибка при попытке получить PRIMARY KEY из
+            таблицы $this->getTableName(): $statement->errorInfo()");
+        }
     }
 
     public function set($field, $value)
@@ -63,12 +85,13 @@ abstract class EntityAbstract implements OrmInterface
         $statement = self::$dbh->prepare($sqlQuery);
         $statement->execute([$id]);
         $values = $statement->fetch();
-        if ($values == false) {
-            echo "No entry was found <br />";
-            return false;
+        if ($values == null) {
+            self::$logger->notice("Запись с ID: $id отсутствует");
+        } else {
+            $this->data = $values;
+            $this->isLoaded = true;
         }
-        $this->data = $values;
-        $this->isLoaded = true;
+
         return $this->data;
     }
 
@@ -76,11 +99,15 @@ abstract class EntityAbstract implements OrmInterface
     {
         try {
             $this->saveEntry();
-        } catch (Exception $ex) {
-            echo "An error has occurred while saving the data: $ex <br />";
+        } catch (\PDOException $ex) {
+            self::$logger->error($ex);
+
+        } catch (\Exception $ex) {
+            self::$logger->error(
+                "An error has occurred while saving the data: $ex "
+            );
         }
     }
-
     public function delete()
     {
         if ($this->isLoaded) {
@@ -88,12 +115,12 @@ abstract class EntityAbstract implements OrmInterface
                 . "` WHERE $this->primaryKey = ?";
 
             $statement = self::$dbh->prepare($sqlQuery);
-            var_dump($this->data[$this->primaryKey]);
             $inserted = $statement->execute([$this->data[$this->primaryKey]]);
             echo "$inserted entry was deleted <br />";
             $this->isLoaded = false;
+            $this->data[$this->primaryKey] = null;
         } else {
-            echo 'You must load an entry before deleting <br />';
+            self::$logger->notice("You must load an entry before deleting");
         }
     }
 

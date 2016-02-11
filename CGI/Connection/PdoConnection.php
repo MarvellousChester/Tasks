@@ -1,22 +1,22 @@
 <?php
 namespace CGI\Connection;
+
 use PDO;
 
 class PdoConnection
 {
     const CONFIG_CONNECTION_FILE = 'Connection.ini';
     private $connectionData;
-
     /**
      * PdoConnection constructor.
      *
-     * @param        $option
+     * @param        $dataInputOption
      * @param        $connectionData
      *
      */
-    public function __construct($option, $connectionData = null)
+    public function __construct($dataInputOption, $connectionData = null)
     {
-        switch ($option) {
+        switch ($dataInputOption) {
             case 'file':
                 $this->connectionData
                     = parse_ini_file(self::CONFIG_CONNECTION_FILE);
@@ -35,6 +35,7 @@ class PdoConnection
     public function establish()
     {
         var_dump($this->connectionData);
+
         $dbName = $this->connectionData['dbname'];
         $host = $this->connectionData['host'];
         $dsn = "mysql:dbname=$dbName;host=$host";
