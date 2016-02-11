@@ -1,5 +1,5 @@
 <?php
-namespace TestOrmNamespace;
+namespace CGI\Orm;
 /**
  * Created by PhpStorm.
  * User: aleksandr

@@ -1,4 +1,6 @@
 <?php
+namespace CGI\Connection;
+use PDO;
 
 class PdoConnection
 {
@@ -14,17 +16,22 @@ class PdoConnection
      */
     public function __construct($option, $connectionData = null)
     {
-        switch ($option)
-        {
-            case 'file': $this->connectionData =
-                parse_ini_file(self::CONFIG_CONNECTION_FILE); break;
-
-            case 'directInput': $this->connectionData = $connectionData;
+        switch ($option) {
+            case 'file':
+                $this->connectionData
+                    = parse_ini_file(self::CONFIG_CONNECTION_FILE);
                 break;
 
-            default: echo 'Invalid connect configuration option'; break;
+            case 'directInput':
+                $this->connectionData = $connectionData;
+                break;
+
+            default:
+                echo 'Invalid connect configuration option';
+                break;
         }
     }
+
     public function establish()
     {
         var_dump($this->connectionData);

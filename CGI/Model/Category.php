@@ -1,28 +1,19 @@
 <?php
+namespace CGI\Trainee;
+
+include_once('../CGI/Orm/Entity.php');
+
+use CGI\Orm\EntityAbstract;
 /**
  * Created by PhpStorm.
  * User: aleksandr
  * Date: 09.02.16
  * Time: 15:15
  */
-include_once 'Entity.php';
+
 
 class Category extends EntityAbstract
 {
-
-    /**
-     * Category constructor.
-     *
-     * @param string $name
-     * @param string $urlKey
-     */
-    public function __construct($dbh, $data)
-    {
-        $this->dbh = $dbh;
-        $this->data = $data;
-        parent::__construct();
-    }
-
     protected function saveEntry()
     {
         //Если url_key отсутствует, то формируем его на основе name
@@ -31,24 +22,27 @@ class Category extends EntityAbstract
         //Приводим url_key в нужный формат
         $this->data['url_key'] =
             mb_strtolower(strtr(trim($this->data['url_key']), ' ', '-'));
-        if($this->isLoaded)
-        {
-            $statement = $this->dbh->prepare(
+
+        if($this->isLoaded) {
+            $statement = self::$dbh->prepare(
                 "UPDATE `category`
                  SET `name` = ?, `url_key` = ?
-                 WHERE category_id = ?");
+                 WHERE category_id = ?"
+            );
             $inserted = $statement->execute(
                 [$this->data['name'],
                  $this->data['url_key'],
-                 $this->data['category_id']]);
+                 $this->data['category_id']]
+            );
         }
-        else
-        {
-            $statement = $this->dbh->prepare(
-                "INSERT INTO `category` (`name`, `url_key`) values (?, ?)");
+        else {
+            $statement = self::$dbh->prepare(
+                "INSERT INTO `category` (`name`, `url_key`) VALUES (?, ?)"
+            );
             $inserted = $statement->execute(
                 [$this->data['name'],
-                 $this->data['url_key']]);
+                 $this->data['url_key']]
+            );
         }
 
         echo "$inserted lines added. <br />";
