@@ -5,8 +5,9 @@
  * Date: 09.02.16
  * Time: 15:15
  */
-include_once 'Orm.php';
-class Category extends OrmAbstract
+include_once 'Entity.php';
+
+class Category extends EntityAbstract
 {
 
     /**
@@ -15,21 +16,11 @@ class Category extends OrmAbstract
      * @param string $name
      * @param string $urlKey
      */
-    public function __construct($name='', $urlKey='')
+    public function __construct($dbh, $data)
     {
-        $this->data['name'] = $name;
-        $this->data['url_key'] = $urlKey;
+        $this->dbh = $dbh;
+        $this->data = $data;
         parent::__construct();
-    }
-
-    protected function loadEntry($id)
-    {
-            $statement = $this->dbh->prepare("SELECT * FROM `category`
-                WHERE category_id = ?");
-            $statement->execute([$id]);
-            $values = $statement->fetch();
-            $this->data = $values;
-        return $this->data;
     }
 
     protected function saveEntry()
@@ -63,21 +54,14 @@ class Category extends OrmAbstract
         echo "$inserted lines added. <br />";
     }
 
-    protected function deleteEntry()
-    {
-        if($this->isLoaded) {
-            $statement = $this->dbh->prepare("DELETE FROM `category`
-                WHERE category_id = ?");
-            $inserted = $statement->execute([$this->data['category_id']]);
-            echo $inserted . 'entry was deleted';
-        }
-        else echo 'You must load an entry before deleting';
-    }
-
     public function getId()
     {
         if(array_key_exists('category_id', $this->data))
             return $this->data['category_id'];
         else return false;
+    }
+    protected function getTableName()
+    {
+        return 'category';
     }
 }

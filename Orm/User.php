@@ -1,12 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: aleksandr
- * Date: 09.02.16
- * Time: 13:07
- */
-include_once 'Orm.php';
-class User extends OrmAbstract
+include_once 'Entity.php';
+
+class User extends EntityAbstract
 {
     /**
      * User constructor.
@@ -15,29 +10,13 @@ class User extends OrmAbstract
      * @param string $lastName
      * @param string $email
      */
-    public function __construct($firstName='', $lastName='', $email='')
+    public function __construct($dbh, $data)
     {
-        $this->data['first_name'] = $firstName;
-        $this->data['last_name'] = $lastName;
-        $this->data['email'] = $email;
+        $this->dbh = $dbh;
+
+        $this->data = $data;
         $this->data['creation_date'] = date('Y-m-d H:i:s');
         parent::__construct();
-    }
-
-    protected function loadEntry($id)
-    {
-        $statement = $this->dbh->prepare(
-            "SELECT * FROM `user` WHERE user_id = ?"
-        );
-        $statement->execute([$id]);
-        $values = $statement->fetch();
-        if($values == false)
-        {
-            echo "No entry was found <br />";
-            return false;
-        }
-        $this->data = $values;
-        return $this->data;
     }
 
     protected function saveEntry()
@@ -70,23 +49,15 @@ class User extends OrmAbstract
         echo "$inserted lines added. <br />";
     }
 
-    protected function deleteEntry()
-    {
-        if($this->isLoaded) {
-            $statement = $this->dbh->prepare("DELETE FROM `user`
-                WHERE user_id = ?");
-            $inserted = $statement->execute([$this->data['user_id']]);
-            echo "$inserted entry was deleted <br />";
-            $this->isLoaded = false;
-        }
-        else echo 'You must load an entry before deleting <br />';
-    }
-
     public function getId()
     {
         if(array_key_exists('user_id', $this->data))
             return $this->data['user_id'];
         else return false;
+    }
+    protected function getTableName()
+    {
+        return 'user';
     }
 
 }
