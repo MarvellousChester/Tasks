@@ -6,7 +6,6 @@ use CGI\Connection\PdoConnection;
 use CGI\Logger\DatabaseLogger;
 use CGI\Logger\FileLogger;
 
-//require_once 'OrmInterface.php';
 /**
  * Created by PhpStorm.
  * User: aleksandr
@@ -31,16 +30,15 @@ abstract class EntityAbstract implements OrmInterface
 
     public function __construct($data = [])
     {
-        if(self::$logger == null) {
+        if (self::$logger == null) {
             self::$logger = new FileLogger('log.txt');
         }
 
         if (self::$dbh == null) {
-            try{
+            try {
                 $this->connection = new PdoConnection('file');
                 self::$dbh = $this->connection->establish();
-            }
-            catch (\PDOException $ex) {
+            } catch (\PDOException $ex) {
                 self::$logger->error($ex);
             }
 
@@ -49,20 +47,19 @@ abstract class EntityAbstract implements OrmInterface
         $statement = self::$dbh->query(
             'SHOW COLUMNS FROM ' . $this->getTableName()
         );
-        if($statement) {
+        if ($statement) {
             $this->primaryKey = $statement->fetch(PDO::FETCH_NUM)[0];
-            foreach($statement as $item )
-            {
+            foreach ($statement as $item) {
                 $this->fields[] = $item['Field'];
             }
 
+        } else {
+            self::$logger->error(
+                "Ошибка при попытке получить PRIMARY KEY из
+            таблицы $this->getTableName(): $statement->errorInfo()"
+            );
         }
-        else {
-            self::$logger->error("Ошибка при попытке получить PRIMARY KEY из
-            таблицы $this->getTableName(): $statement->errorInfo()");
-        }
-        foreach($data as $key => $value)
-        {
+        foreach ($data as $key => $value) {
             $this->set($key, $value);
         }
         $this->table = $this->getTableName();
@@ -77,7 +74,6 @@ abstract class EntityAbstract implements OrmInterface
                 "Ошибка при добавлении значения поля $field"
             );
         }
-
     }
 
     public function get($field)
@@ -109,51 +105,44 @@ abstract class EntityAbstract implements OrmInterface
 
     public function save()
     {
-        /*$queryMas = [];
+        $this->beforeSave();
+
+        $queryMas = [];
         $insertMas = [];
-        foreach($this->data as $key => $value)
-        {
-            if($key != $this->primaryKey)
-            {
+        foreach ($this->data as $key => $value) {
+            if ($key != $this->primaryKey) {
                 $queryMas[$key] = '`' . $key . '` = ?';
                 $insertMas[] = $value;
             }
         }
-        array_push($insertMas, $this->data[$this->primaryKey]);
 
-        if($this->isLoaded) {
+        if ($this->isLoaded) {
 
-            $query = "UPDATE `$this->table` SET " . implode(', ', $queryMas) . " WHERE $this->primaryKey = ?";
-
-            $statement = self::$dbh->prepare($query);
-
-            $inserted = $statement->execute($insertMas);
-        }
-        else {
-             foreach ($this->fields as $key => $value)
-             {
-                 $this->fields[$key] = "'$value'";
-                 $items[] = '?';
-             }
-            $query = "INSERT INTO `$this->table` (" . implode(',', $this->fields) . ") VALUES (" . implode(',', $items) . ")";
+            $query = "UPDATE `$this->table` SET " . implode(', ', $queryMas)
+                . " WHERE $this->primaryKey = ?";
 
             $statement = self::$dbh->prepare($query);
+
+            array_push($insertMas, $this->data[$this->primaryKey]);
+
+            $inserted = $statement->execute($insertMas);
+        } else {
+            foreach ($this->fields as $key => $value) {
+                $this->fields[$key] = "`$value`";
+                $items[] = '?';
+            }
+            $query = "INSERT INTO `$this->table` (" . implode(
+                    ', ', $this->fields
+                ) . ") VALUES (" . implode(', ', $items) . ")";
+
+            $statement = self::$dbh->prepare($query);
             $inserted = $statement->execute($insertMas);
         }
 
-        echo "$inserted lines added. <br />";*/
+        echo "$inserted lines added. <br />";
 
-        try {
-            $this->saveEntry();
-        } catch (\PDOException $ex) {
-            self::$logger->error($ex);
-
-        } catch (\Exception $ex) {
-            self::$logger->error(
-                "An error has occurred while saving the data: $ex "
-            );
-        }
     }
+
     public function delete()
     {
         if ($this->isLoaded) {
@@ -170,7 +159,17 @@ abstract class EntityAbstract implements OrmInterface
         }
     }
 
-    abstract protected function saveEntry();
-
+    /**
+     * Returns the name of the table
+     * @return mixed
+     */
     abstract protected function getTableName();
+
+    /**
+     *Called before save() method
+     */
+    protected function beforeSave()
+    {
+
+    }
 }
