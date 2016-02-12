@@ -130,10 +130,15 @@ abstract class EntityAbstract implements OrmInterface
             $inserted = $statement->execute($insertMas);
         }
         else {
-            $query = "INSERT INTO `$this->table` (" . implode(',', $this->fields) . ") VALUES (" . implode(',', $insertMas) . ")";
+             foreach ($this->fields as $key => $value)
+             {
+                 $this->fields[$key] = "'$value'";
+                 $items[] = '?';
+             }
+            $query = "INSERT INTO `$this->table` (" . implode(',', $this->fields) . ") VALUES (" . implode(',', $items) . ")";
 
             $statement = self::$dbh->prepare($query);
-            $inserted = $statement->execute();
+            $inserted = $statement->execute($insertMas);
         }
 
         echo "$inserted lines added. <br />";*/
