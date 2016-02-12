@@ -1,6 +1,6 @@
 <?php
 namespace CGI\Logger;
-require_once 'LoggerAbstract.php';
+
 /**
  * Created by PhpStorm.
  * User: aleksandr

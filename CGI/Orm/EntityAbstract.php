@@ -1,11 +1,6 @@
 <?php
 namespace CGI\Orm;
 
-include 'OrmInterface.php';
-require_once '../CGI/Connection/PdoConnection.php';
-require_once '../CGI/Logger/DatabaseLogger.php';
-require_once '../CGI/Logger/FileLogger.php';
-
 use PDO;
 use CGI\Connection\PdoConnection;
 use CGI\Logger\DatabaseLogger;
@@ -124,7 +119,7 @@ abstract class EntityAbstract implements OrmInterface
         }
     }
 
-    protected abstract function saveEntry();
+    abstract protected function saveEntry();
 
-    protected abstract function getTableName();
+    abstract protected function getTableName();
 }

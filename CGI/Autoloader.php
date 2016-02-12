@@ -1,0 +1,37 @@
+<?php
+namespace CGI;
+/**
+ * Created by PhpStorm.
+ * User: aleksandr
+ * Date: 12.02.16
+ * Time: 10:09
+ */
+class Autoloader
+{
+    public function register()
+    {
+        spl_autoload_register(array($this, 'autoload'));
+    }
+
+    protected function autoload($className)
+    {
+        $pathParts = explode('\\', $className);
+
+        $fileName = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . implode(
+                DIRECTORY_SEPARATOR, $pathParts
+            ) . '.php';
+        if (file_exists($fileName)) {
+            require_once $fileName;
+            if (!class_exists($className)) {
+
+                return false;
+            }
+        } else {
+            return false;
+
+        }
+
+        return true;
+    }
+
+}

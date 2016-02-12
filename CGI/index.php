@@ -1,8 +1,10 @@
 <?php
-namespace CGI;
+use CGI\Autoloader;
 
-require_once ('Model/User.php');
-require_once ('Model/Category.php');
+require_once('Autoloader.php');
+
+$autoloader = new Autoloader();
+$autoloader->register();
 
 use CGI\Trainee\User;
 use CGI\Trainee\Category;

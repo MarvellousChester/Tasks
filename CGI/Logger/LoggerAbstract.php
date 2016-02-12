@@ -1,5 +1,6 @@
 <?php
 namespace CGI\Logger;
+
 require_once 'LoggerInterface.php';
 /**
  * Created by PhpStorm.

@@ -1,5 +1,6 @@
 <?php
 namespace CGI\Orm;
+
 /**
  * Created by PhpStorm.
  * User: aleksandr

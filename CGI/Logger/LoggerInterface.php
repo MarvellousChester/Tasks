@@ -1,5 +1,6 @@
 <?php
 namespace CGI\Logger;
+
 interface PsrInterface
 {
     public function error($message);

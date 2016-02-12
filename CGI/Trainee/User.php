@@ -1,8 +1,6 @@
 <?php
 namespace CGI\Trainee;
 
-include_once('../CGI/Orm/Entity.php');
-
 use CGI\Orm\EntityAbstract;
 
 
