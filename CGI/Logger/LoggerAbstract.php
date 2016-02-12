@@ -1,7 +1,6 @@
 <?php
 namespace CGI\Logger;
 
-require_once 'LoggerInterface.php';
 /**
  * Created by PhpStorm.
  * User: aleksandr
@@ -16,7 +15,7 @@ class LogConstant
     const NOTICE = 'notice';
 }
 
-abstract class LoggerAbstract implements PsrInterface
+abstract class LoggerAbstract implements LoggerInterface
 {
     public function error($message)
     {

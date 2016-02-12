@@ -22,13 +22,11 @@ class Autoloader
             ) . '.php';
         if (file_exists($fileName)) {
             require_once $fileName;
-            if (!class_exists($className)) {
-
-                return false;
+            if (!class_exists($className) && !interface_exists($className)) {
+                throw new \Exception;
             }
         } else {
-            return false;
-
+            throw new \Exception;
         }
 
         return true;

@@ -5,6 +5,8 @@ use PDO;
 use CGI\Connection\PdoConnection;
 use CGI\Logger\DatabaseLogger;
 use CGI\Logger\FileLogger;
+
+//require_once 'OrmInterface.php';
 /**
  * Created by PhpStorm.
  * User: aleksandr
@@ -25,6 +27,7 @@ abstract class EntityAbstract implements OrmInterface
 
     protected $table;
     protected $primaryKey;
+    protected $fields = [];
 
     public function __construct($data = [])
     {
@@ -43,24 +46,38 @@ abstract class EntityAbstract implements OrmInterface
 
         }
 
-        $this->data = $data;
-        $this->table = $this->getTableName();
-
         $statement = self::$dbh->query(
             'SHOW COLUMNS FROM ' . $this->getTableName()
         );
         if($statement) {
             $this->primaryKey = $statement->fetch(PDO::FETCH_NUM)[0];
+            foreach($statement as $item )
+            {
+                $this->fields[] = $item['Field'];
+            }
+
         }
         else {
             self::$logger->error("Ошибка при попытке получить PRIMARY KEY из
             таблицы $this->getTableName(): $statement->errorInfo()");
         }
+        foreach($data as $key => $value)
+        {
+            $this->set($key, $value);
+        }
+        $this->table = $this->getTableName();
     }
 
     public function set($field, $value)
     {
-        $this->data[$field] = $value;
+        if (in_array($field, $this->fields)) {
+            $this->data[$field] = $value;
+        } else {
+            self::$logger->notice(
+                "Ошибка при добавлении значения поля $field"
+            );
+        }
+
     }
 
     public function get($field)
@@ -92,6 +109,35 @@ abstract class EntityAbstract implements OrmInterface
 
     public function save()
     {
+        /*$queryMas = [];
+        $insertMas = [];
+        foreach($this->data as $key => $value)
+        {
+            if($key != $this->primaryKey)
+            {
+                $queryMas[$key] = '`' . $key . '` = ?';
+                $insertMas[] = $value;
+            }
+        }
+        array_push($insertMas, $this->data[$this->primaryKey]);
+
+        if($this->isLoaded) {
+
+            $query = "UPDATE `$this->table` SET " . implode(', ', $queryMas) . " WHERE $this->primaryKey = ?";
+
+            $statement = self::$dbh->prepare($query);
+
+            $inserted = $statement->execute($insertMas);
+        }
+        else {
+            $query = "INSERT INTO `$this->table` (" . implode(',', $this->fields) . ") VALUES (" . implode(',', $insertMas) . ")";
+
+            $statement = self::$dbh->prepare($query);
+            $inserted = $statement->execute();
+        }
+
+        echo "$inserted lines added. <br />";*/
+
         try {
             $this->saveEntry();
         } catch (\PDOException $ex) {
