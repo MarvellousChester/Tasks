@@ -1,19 +1,10 @@
 <?php
-namespace CGI\Trainee;
+namespace Cgi\Trainee;
 
-use CGI\Orm\EntityAbstract;
+use Cgi\Orm\EntityAbstract;
 
 class User extends EntityAbstract
 {
-    public function getId()
-    {
-        if (array_key_exists('user_id', $this->data)) {
-            return $this->data['user_id'];
-        } else {
-            return false;
-        }
-    }
-
     protected function getTableName()
     {
         return 'user';

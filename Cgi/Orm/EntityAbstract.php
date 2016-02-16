@@ -1,16 +1,14 @@
 <?php
-namespace CGI\Orm;
+namespace Cgi\Orm;
 
 use PDO;
-use CGI\Connection\PdoConnection;
-use CGI\Logger\DatabaseLogger;
-use CGI\Logger\FileLogger;
+use Cgi\Connection\PdoConnection;
+//use Cgi\Logger\DatabaseLogger;
+use Cgi\Logger\FileLogger;
 
 /**
- * Created by PhpStorm.
- * User: aleksandr
- * Date: 09.02.16
- * Time: 12:37
+ * An abstract entity class. All derived classes must represent a specific
+ * database entity
  */
 
 abstract class EntityAbstract implements OrmInterface
@@ -28,6 +26,11 @@ abstract class EntityAbstract implements OrmInterface
     protected $primaryKey;
     protected $fields = [];
 
+    /**
+     * EntityAbstract constructor.
+     *
+     * @param array $data
+     */
     public function __construct($data = [])
     {
         if (self::$logger == null) {
@@ -55,8 +58,8 @@ abstract class EntityAbstract implements OrmInterface
 
         } else {
             self::$logger->error(
-                "Ошибка при попытке получить PRIMARY KEY из
-            таблицы $this->getTableName(): $statement->errorInfo()"
+                "En error has occurred while getting the PRIMARY KEY from
+            table $this->getTableName(): $statement->errorInfo()"
             );
         }
         foreach ($data as $key => $value) {
@@ -65,23 +68,33 @@ abstract class EntityAbstract implements OrmInterface
         $this->table = $this->getTableName();
     }
 
+    /**
+     * Set the value of field
+     * @param $field
+     * @param $value
+     */
     public function set($field, $value)
     {
         if (in_array($field, $this->fields)) {
             $this->data[$field] = $value;
         } else {
             self::$logger->notice(
-                "Ошибка при добавлении значения поля $field"
+                "En error while inserting value to field $field : such field is not exist"
             );
         }
     }
 
+    /**
+     * @param $field
+     *
+     * @return data
+     */
     public function get($field)
     {
         if (array_key_exists($field, $this->data)) {
             return $this->data[$field];
         } else {
-            return false;
+            return null;
         }
     }
 
@@ -94,7 +107,7 @@ abstract class EntityAbstract implements OrmInterface
         $statement->execute([$id]);
         $values = $statement->fetch();
         if ($values == null) {
-            self::$logger->notice("Запись с ID: $id отсутствует");
+            self::$logger->notice("Can't find en entry with ID: $id ");
         } else {
             $this->data = $values;
             $this->isLoaded = true;
@@ -159,6 +172,14 @@ abstract class EntityAbstract implements OrmInterface
         }
     }
 
+    /**
+     * Returns ID of the entry
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->primaryKey;
+    }
     /**
      * Returns the name of the table
      * @return mixed

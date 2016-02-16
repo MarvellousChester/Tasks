@@ -1,5 +1,5 @@
 <?php
-namespace CGI\Orm;
+namespace Cgi\Orm;
 
 /**
  * Created by PhpStorm.

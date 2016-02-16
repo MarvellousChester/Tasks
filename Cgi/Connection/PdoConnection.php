@@ -1,5 +1,5 @@
 <?php
-namespace CGI\Connection;
+namespace Cgi\Connection;
 
 use PDO;
 

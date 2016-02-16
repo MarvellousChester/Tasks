@@ -1,16 +1,10 @@
 <?php
-namespace CGI\Trainee;
+namespace Cgi\Trainee;
 
-use CGI\Orm\EntityAbstract;
+use Cgi\Orm\EntityAbstract;
 
 class Category extends EntityAbstract
 {
-    public function getId()
-    {
-        if(array_key_exists('category_id', $this->data))
-            return $this->data['category_id'];
-        else return false;
-    }
     protected function getTableName()
     {
         return 'category';
@@ -20,7 +14,7 @@ class Category extends EntityAbstract
     {
         if(!$this->isLoaded) {
             //Если url_key отсутствует, то формируем его на основе name
-            if ($this->data['url_key'] == '') {
+            if(empty($this->data['url_key'])) {
                 $this->data['url_key'] = $this->data['name'];
             }
             //Приводим url_key в нужный формат

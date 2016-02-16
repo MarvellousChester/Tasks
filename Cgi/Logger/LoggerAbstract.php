@@ -1,5 +1,5 @@
 <?php
-namespace CGI\Logger;
+namespace Cgi\Logger;
 
 /**
  * Created by PhpStorm.
@@ -8,28 +8,26 @@ namespace CGI\Logger;
  * Time: 14:03
  */
 
-class LogConstant
+
+abstract class LoggerAbstract implements LoggerInterface
 {
     const ERROR = 'error';
     const WARNING = 'warning';
     const NOTICE = 'notice';
-}
 
-abstract class LoggerAbstract implements LoggerInterface
-{
     public function error($message)
     {
-        $this->writeLog($message, LogConstant::ERROR);
+        $this->writeLog($message, self::ERROR);
     }
 
     public function warning($message)
     {
-        $this->writeLog($message, LogConstant::WARNING);
+        $this->writeLog($message, self::WARNING);
     }
 
     public function notice($message)
     {
-        $this->writeLog($message, LogConstant::NOTICE);
+        $this->writeLog($message, self::NOTICE);
     }
 
     abstract protected function writeLog($message, $messageType);

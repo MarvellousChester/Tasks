@@ -1,7 +1,7 @@
 <?php
-namespace CGI\Logger;
+namespace Cgi\Logger;
 
-use CGI\Connection\PdoConnection;
+use Cgi\Connection\PdoConnection;
 /**
  * Created by PhpStorm.
  * User: aleksandr

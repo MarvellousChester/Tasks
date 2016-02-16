@@ -1,5 +1,5 @@
 <?php
-namespace CGI\Logger;
+namespace Cgi\Logger;
 
 /**
  * Created by PhpStorm.
@@ -23,9 +23,9 @@ class FileLogger extends LoggerAbstract
             $file, date('Y-m-d H:i:s') . ' ' . ' error: ' . $message . "\n"
         );
         if ($test) {
-            echo 'Данные в файл успешно занесены. <br />';
+            echo 'Log was successfully written. <br />';
         } else {
-            echo 'Ошибка при записи в файл. <br />';
+            echo 'En error while writing the log. <br />';
         }
         fclose($file);
     }

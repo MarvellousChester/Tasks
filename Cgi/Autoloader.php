@@ -1,5 +1,5 @@
 <?php
-namespace CGI;
+namespace Cgi;
 /**
  * Created by PhpStorm.
  * User: aleksandr

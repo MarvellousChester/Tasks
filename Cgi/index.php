@@ -1,19 +1,19 @@
 <?php
-use CGI\Autoloader;
+use Cgi\Autoloader;
 
 require_once('Autoloader.php');
 
 $autoloader = new Autoloader();
 $autoloader->register();
 
-use CGI\Trainee\User;
-use CGI\Trainee\Category;
+use Cgi\Trainee\User;
+use Cgi\Trainee\Category;
 
 echo 'Hello! <br />';
 
-//$user = new User(['first_name' => 'John', 'last_name' => 'Stone', 'email' => 'JohnStone@mail.ru']);
-//$user->set('first_name', 'Alex');
-//$user->save();
+$user = new User(['first_name' => 'John', 'last_name' => 'Stone', 'email' => 'JohnStone@mail.ru']);
+$user->set('first_name', 'Alex');
+$user->save();
 //$user2 = new User();
 //$user2->set('first_name', 'Bob');
 //$user2->set('last_name', 'Kerman');

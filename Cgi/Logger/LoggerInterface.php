@@ -1,5 +1,5 @@
 <?php
-namespace CGI\Logger;
+namespace Cgi\Logger;
 
 interface LoggerInterface
 {
