@@ -35,6 +35,9 @@ class test
             if (!next($this->mas)) {
                 $this->result = $this->romannum;
                 reset($this->mas);
+                $this->romannum = '';
+
+
             } else {
                 $this->convert($value);
             }
@@ -84,5 +87,6 @@ class test
 $test = new test();
 
 
+$result = $test->convert(156);
 $result = $test->convert(156);
 echo $result;
