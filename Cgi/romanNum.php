@@ -1,10 +1,9 @@
 <?php
 
-
 class test
 {
     /**
-     * @var array $mas The massive of digits values
+     * @var array $mas The massive of digit values
      */
     protected $mas
         = array('M' => 1000, 'D' => 500, 'C' => 100, 'L' => 50, 'X' => 10,
@@ -20,7 +19,7 @@ class test
     function convert($value)
     {
         //Cant calc more then 3999
-        if ($value > 3999) {
+        if (($value <= 0) || ($value > 3999)) {
             return false;
         }
 
@@ -29,14 +28,16 @@ class test
          */
         $remainder = (int)($value / current($this->mas));
         /**
-         * If reminder is zero move to next digits value
+         * If reminder is zero move to next digit value
          */
         if ($remainder == 0) {
             if (!next($this->mas)) {
+                /**
+                 * Return the result if there is no next value.
+                 */
                 $this->result = $this->romannum;
                 reset($this->mas);
                 $this->romannum = '';
-
 
             } else {
                 $this->convert($value);
@@ -77,9 +78,7 @@ class test
             $this->convert($value);
         }
 
-
         return $this->result;
-
     }
 
 }
