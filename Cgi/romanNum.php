@@ -19,7 +19,7 @@ class test
     function convert($value)
     {
         //Cant calc more then 3999
-        if (($value <= 0) || ($value > 3999)) {
+        if (($value < 0) || ($value > 3999)) {
             return false;
         }
 
@@ -36,8 +36,6 @@ class test
                  * Return the result if there is no next value.
                  */
                 $this->result = $this->romannum;
-                reset($this->mas);
-                $this->romannum = '';
 
             } else {
                 $this->convert($value);
@@ -77,8 +75,10 @@ class test
             $value -= current($this->mas);
             $this->convert($value);
         }
-
+        reset($this->mas);
+        $this->romannum = '';
         return $this->result;
+
     }
 
 }
@@ -87,5 +87,6 @@ $test = new test();
 
 
 $result = $test->convert(156);
-$result = $test->convert(156);
-echo $result;
+var_dump($result);
+$result = $test->convert(100);
+var_dump($result);
